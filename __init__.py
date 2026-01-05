@@ -41,25 +41,25 @@ def extract_minutes(date_string):
     date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
     return jsonify({'minutes': date_object.minute})
 
-
 @app.route('/commits/')
 def commits():
+    # 1. Récupérer les commits depuis GitHub
     url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
     data = requests.get(url).json()
 
+    # 2. Extraire les minutes de chaque commit
     minutes = []
-
     for c in data:
-        date_string = c["commettre"]["auteur"]["date"]
-        minute = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ").minute
-        minutes.append(minute)
+        date_string = c["commettre"]["auteur"]["date"]  # clé qui contient la date
+        date_object = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ")
+        minutes.append(date_object.minute)
 
-    compteur = Counter(minutes)
+    # 3. Compter combien de commits par minute
+    counts = [minutes.count(i) for i in range(60)]
 
-    labels = list(range(60))
-    values = [compteur.get(i, 0) for i in labels]
+    # 4. Passer les données au template
+    return render_template("commits.html", counts=counts)
 
-    return render_template("commits.html", labels=labels, values=values)
 
   
 if __name__ == "__main__":
