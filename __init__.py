@@ -31,6 +31,10 @@ def hello_world():
 def mongraphique():
     return render_template("graphique.html")
 
+@app.route("/histogramme/")
+def mongraphique():
+    return render_template("histogram.html")
+
 
   
 if __name__ == "__main__":
