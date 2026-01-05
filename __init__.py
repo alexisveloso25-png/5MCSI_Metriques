@@ -35,6 +35,7 @@ def mongraphique():
 @app.route("/histogramme/")
 def histogram():
     return render_template("histogram.html")
+  
 @app.route('/extract-minutes/<date_string>')
 def extract_minutes(date_string):
     date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
