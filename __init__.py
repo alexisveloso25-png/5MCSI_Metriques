@@ -43,21 +43,25 @@ def extract_minutes(date_string):
 
 @app.route('/commits/')
 def commits():
-    # 1. Récupérer les commits depuis GitHub
+    # Récupère les 30 derniers commits du repo
     url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
-    data = requests.get(url).json()
+    response = requests.get(url)
+    data = response.json()
 
-    # 2. Extraire les minutes de chaque commit
+    # Extraction des minutes de chaque commit
     minutes = []
-    for c in data:
-        date_string = c["commettre"]["auteur"]["date"]  # clé qui contient la date
-        date_object = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ")
-        minutes.append(date_object.minute)
+    for commit in data:
+        try:
+            date_str = commit["commettre"]["auteur"]["date"]  # clé à respecter
+            date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
+            minutes.append(date_obj.minute)
+        except KeyError:
+            continue  # Ignore les commits mal formés
 
-    # 3. Compter combien de commits par minute
+    # Compte des commits par minute
     counts = [minutes.count(i) for i in range(60)]
 
-    # 4. Passer les données au template
+    # On envoie le tableau counts au template HTML
     return render_template("commits.html", counts=counts)
 
 
