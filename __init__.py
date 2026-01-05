@@ -36,34 +36,35 @@ def mongraphique():
 def histogram():
     return render_template("histogram.html")
   
+
+
+
 @app.route('/extract-minutes/<date_string>')
 def extract_minutes(date_string):
         date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
         minutes = date_object.minute
         return jsonify({'minutes': minutes})
 
-@app.route('/commits/')
+@app.route('/getcommits/')
 def commits():
-    # Récupère les 30 derniers commits du repo
-    url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
-    response = requests.get(url)
-    data = response.json()
+    response = urlopen("https://api.github.com/repos/euzzeud/5MCSI_Metriques/commits")
+    raw_content = response.read()
+    commits = json.loads(raw_content.decode('utf-8'))
 
-    # Extraction des minutes de chaque commit
-    minutes = []
-    for commit in data:
-        try:
-            date_str = commit["commettre"]["auteur"]["date"]  # clé à respecter
-            date_obj = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
-            minutes.append(date_obj.minute)
-        except KeyError:
-            continue  # Ignore les commits mal formés
+    results = []
 
-    # Compte des commits par minute
-    counts = [minutes.count(i) for i in range(60)]
+    for commit in commits:
+        date_string = commit['commit']['author']['date']
+        date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
+        minute = date_object.minute
+        results.append({'minute': minute})
 
-    # On envoie le tableau counts au template HTML
-    return render_template("commits.html", counts=counts)
+    return jsonify(results=results)
+
+@app.route("/commits/")
+def commitGraphique():
+    return render_template("commits.html")
+
 
 
   
