@@ -30,6 +30,10 @@ def hello_world():
 @app.route("/rapport/")
 def mongraphique():
     return render_template("graphique.html")
+
+@app.route("histogramme/")
+def histogram():
+  return render_template("histogram.html")
   
 if __name__ == "__main__":
   app.run(debug=True)
