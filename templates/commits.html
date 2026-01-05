@@ -1,36 +1,50 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Commits par minute</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <title>Commits par minute</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+            padding: 30px;
+        }
+        canvas {
+            background-color: white;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            max-width: 800px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Nombre de commits par minute</h1>
-  <canvas id="chart" width="600" height="400"></canvas>
+    <h1>Graphique des commits par minute</h1>
+    <canvas id="commitsChart"></canvas>
 
-  <script>
-    const counts = {{ counts | safe }};
-    const labels = [...Array(60).keys()];  // 0 à 59
-
-    new Chart(document.getElementById("chart"), {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'Commits par minute',
-          data: counts,
-          backgroundColor: 'rgba(54, 162, 235, 0.6)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
-    });
-  </script>
+    <script>
+        const ctx = document.getElementById('commitsChart').getContext('2d');
+        const counts = {{ counts|safe }};
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Array.from({length: 60}, (_, i) => i), // 0 à 59
+                datasets: [{
+                    label: 'Nombre de commits',
+                    data: counts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: 'Minute' } },
+                    y: { title: { display: true, text: 'Commits' }, beginAtZero: true }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
