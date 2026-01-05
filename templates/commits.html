@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Commits par minute</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<h2>Commits minute par minute</h2>
+
+<canvas id="chart"></canvas>
+
+<script>
+  new Chart(document.getElementById("chart"), {
+    type: "bar",
+    data: {
+      labels: {{ labels | safe }},
+      datasets: [{
+        label: "Commits",
+        data: {{ values | safe }}
+      }]
+    }
+  });
+</script>
+
+</body>
+</html>
