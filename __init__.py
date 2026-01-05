@@ -35,12 +35,11 @@ def mongraphique():
 @app.route("/histogramme/")
 def histogram():
     return render_template("histogram.html")
-
 @app.route('/extract-minutes/<date_string>')
 def extract_minutes(date_string):
     date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
-    minutes = date_object.minute
-    return jsonify({'minutes': minutes})
+    return jsonify({'minutes': date_object.minute})
+
 
 @app.route('/commits/')
 def commits():
@@ -48,16 +47,16 @@ def commits():
     data = requests.get(url).json()
 
     minutes = []
-    for commit in data:
-        date_string = commit["commit"]["author"]["date"]
-        minutes.append(
-            datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ").minute
-        )
+
+    for c in data:
+        date_string = c["commettre"]["auteur"]["date"]
+        minute = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%SZ").minute
+        minutes.append(minute)
 
     compteur = Counter(minutes)
 
     labels = list(range(60))
-    values = [compteur.get(minute, 0) for minute in labels]
+    values = [compteur.get(i, 0) for i in labels]
 
     return render_template("commits.html", labels=labels, values=values)
 
